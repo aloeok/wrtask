@@ -5,13 +5,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
-import java.util.List;
-
 @Getter
 @Builder
 @Jacksonized
-public class SubscriptionListDto {
-    @org.jetbrains.annotations.NotNull
-    @JsonProperty("subscriptions")
-    private final List<SubscriptionDto> subscriptions;
+public class CreateUserDto {
+    @jakarta.validation.constraints.NotNull
+    @JsonProperty("username")
+    private final String username;
 }

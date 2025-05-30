@@ -9,9 +9,11 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Jacksonized
 public class UserDto {
+    @org.jetbrains.annotations.NotNull
     @JsonProperty("id")
     private final Long id;
 
+    @org.jetbrains.annotations.NotNull
     @JsonProperty("username")
     private final String username;
 }
