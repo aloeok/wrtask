@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: wrtask
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 100
+      auto-commit: true
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  liquibase:
+    enabled: true
+
+server:
+  port: 8081

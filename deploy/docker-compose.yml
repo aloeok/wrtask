@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  database:
+    image: postgres:17.4
+    container_name: wrtask-db
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: wrtask-db
+      POSTGRES_USER: wrtask-user
+      POSTGRES_PASSWORD: wrtask-1357!#%
+    volumes:
+      - /var/wrtask/dbdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  application:
+    image: wrtask:test
+    container_name: wrtask-app
+    network_mode: host
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5433/wrtask-db
+      SPRING_DATASOURCE_USERNAME: wrtask-user
+      SPRING_DATASOURCE_PASSWORD: wrtask-1357!#%
+    depends_on:
+      - database
+    restart: unless-stopped
