@@ -14,7 +14,6 @@ import lombok.Setter;
 import java.util.Set;
 
 @Getter
-@Setter
 @Entity(name = "users")
 public class UserEntity {
     @Id
@@ -22,6 +21,7 @@ public class UserEntity {
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
+    @Setter
     @Column(name = "username", nullable = false, unique = true)
     private String username;
 

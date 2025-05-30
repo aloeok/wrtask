@@ -12,7 +12,6 @@ import lombok.Setter;
 import java.util.Set;
 
 @Getter
-@Setter
 @Entity(name = "subscriptions")
 public class SubscriptionEntity {
     @Id
@@ -20,6 +19,7 @@ public class SubscriptionEntity {
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
+    @Setter
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
