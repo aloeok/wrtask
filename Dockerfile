@@ -7,5 +7,3 @@ WORKDIR /home
 EXPOSE 8081
 
 CMD ["java", "-jar", "wrtask-1.0-SNAPSHOT.jar"]
-
-# docker build -t wrtask:test .
