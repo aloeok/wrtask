@@ -14,9 +14,28 @@
             color: #333;
         }
 
+        header {
+            background-color: #4a90e2;
+            color: white;
+            padding: 1rem;
+            position: static;
+            top: 0;
+            z-index: 1000;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
         h1 {
             text-align: center;
-            margin-bottom: 1rem;
+            margin: 2rem 0 1rem;
+        }
+
+        #top-subscriptions {
+            background-color: #e9ecef;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 2rem;
         }
 
         #add-user-form, #add-subscription-form {
@@ -57,7 +76,7 @@
         }
 
         select {
-            padding: 0.3rem;
+            padding: 0.4rem;
             font-size: 1rem;
             border-radius: 4px;
             border: 1px solid #ccc;
@@ -108,6 +127,7 @@
         ul {
             list-style: none;
             padding-left: 0;
+            line-height: 2.2;
         }
 
         ul li {
@@ -128,9 +148,20 @@
             justify-content: center;
             align-items: center;
         }
+
+        .select-wrapper select:invalid {
+            color: gray;
+        }
     </style>
 </head>
 <body>
+<header>
+    User and Subscription Management
+</header>
+<div id="top-subscriptions">
+    <strong>Top 3 Subscriptions:</strong>
+    <ul id="top-subscriptions-list"></ul>
+</div>
 <h1>Users</h1>
 
 <div id="error-message"></div>
