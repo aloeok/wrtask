@@ -386,6 +386,7 @@
             const res = await fetch(`${API_BASE}/users/${id}`, { method: "DELETE" });
             if (!res.ok) throw new Error("Failed to delete user");
             fetchUsers();
+            fetchTopSubscriptions();
         } catch (e) {
             showError(e.message);
         }
