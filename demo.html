@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User and Subscription Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0 auto;
+            max-width: 800px;
+            padding: 2rem;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        #add-user-form, #add-subscription-form {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #357ab8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #e9ecef;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            background-color: #b52a37;
+        }
+
+        #error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+<h1>Users</h1>
+
+<div id="error-message"></div>
+
+<div id="add-user-form">
+    <input type="text" id="username-input" placeholder="Enter username" />
+    <button id="add-user-button">Add User</button>
+</div>
+
+<table id="users-table">
+    <thead>
+    <tr>
+        <th>Username</th>
+        <th style="width: 80px">Actions</th>
+        <th>Subscriptions</th>
+        <th style="width: 80px">Unsubscribe</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<h1>Subscriptions</h1>
+
+<div id="add-subscription-form">
+    <input type="text" id="subscription-input" placeholder="Enter subscription name" />
+    <button id="add-subscription-button">Add Subscription</button>
+</div>
+
+<table id="subscriptions-table">
+    <thead>
+    <tr>
+        <th>Subscription</th>
+        <th style="width: 80px">Actions</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    const API_BASE = "http://localhost:8081";
+
+    const userTableBody = document.querySelector("#users-table tbody");
+    const usernameInput = document.querySelector("#username-input");
+    const addUserButton = document.querySelector("#add-user-button");
+
+    const subTableBody = document.querySelector("#subscriptions-table tbody");
+    const subInput = document.querySelector("#subscription-input");
+    const addSubButton = document.querySelector("#add-subscription-button");
+
+    const errorMessage = document.querySelector("#error-message");
+
+    function showError(msg) {
+        errorMessage.textContent = msg;
+        errorMessage.style.display = "block";
+        setTimeout(() => errorMessage.style.display = "none", 3000);
+    }
+
+    async function fetchUsers() {
+        try {
+            const res = await fetch(`${API_BASE}/users`);
+            if (!res.ok) throw new Error("Failed to load users");
+            const data = await res.json();
+            renderUsers(data.users);
+        } catch (e) {
+            showError(e.message);
+        }
+    }
+
+    async function fetchUserSubscriptions(userId) {
+        const res = await fetch(`${API_BASE}/users/${userId}/subscriptions`);
+        if (!res.ok) return [];
+        const data = await res.json();
+        return data.subscriptions;
+    }
+
+    async function renderUsers(users) {
+        userTableBody.innerHTML = "";
+        for (const user of users) {
+            const subscriptions = await fetchUserSubscriptions(user.id);
+            const subList = document.createElement("ul");
+            const unsubList = document.createElement("ul");
+
+            subscriptions.forEach(sub => {
+                const li = document.createElement("li");
+                li.textContent = sub.name;
+                subList.appendChild(li);
+
+                const unsubLi = document.createElement("li");
+                const unsubBtn = document.createElement("button");
+                unsubBtn.textContent = "×";
+                unsubBtn.className = "delete-button";
+                unsubBtn.onclick = () => unsubscribe(user.id, sub.id);
+                unsubLi.appendChild(unsubBtn);
+                unsubList.appendChild(unsubLi);
+            });
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                    <td>${user.username}</td>
+                    <td><button class="delete-button" onclick="deleteUser(${user.id})">×</button></td>
+                `;
+            row.appendChild(document.createElement("td")).appendChild(subList);
+            row.appendChild(document.createElement("td")).appendChild(unsubList);
+            userTableBody.appendChild(row);
+        }
+    }
+
+    function renderSubscriptions(subs) {
+        subTableBody.innerHTML = "";
+        subs.forEach(sub => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                    <td>${sub.name}</td>
+                    <td>
+                        <button class="delete-button" onclick="deleteSubscription(${sub.id})">×</button>
+                    </td>
+                `;
+            subTableBody.appendChild(row);
+        });
+    }
+
+    async function fetchSubscriptions() {
+        try {
+            const res = await fetch(`${API_BASE}/subscriptions`);
+            if (!res.ok) throw new Error("Failed to load subscriptions");
+            const data = await res.json();
+            renderSubscriptions(data.subscriptions);
+            fetchUsers(); // Refresh users too, to reflect removed subscriptions
+        } catch (e) {
+            showError(e.message);
+        }
+    }
+
+    async function addUser() {
+        const username = usernameInput.value.trim();
+        if (!username) return;
+        try {
+            const res = await fetch(`${API_BASE}/users`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username })
+            });
+            if (!res.ok) throw new Error("Failed to add user");
+            usernameInput.value = "";
+            fetchUsers();
+        } catch (e) {
+            showError(e.message);
+        }
+    }
+
+    async function addSubscription() {
+        const name = subInput.value.trim();
+        if (!name) return;
+        try {
+            const res = await fetch(`${API_BASE}/subscriptions`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name })
+            });
+            if (!res.ok) throw new Error("Failed to add subscription");
+            subInput.value = "";
+            fetchSubscriptions();
+        } catch (e) {
+            showError(e.message);
+        }
+    }
+
+    async function deleteUser(id) {
+        try {
+            const res = await fetch(`${API_BASE}/users/${id}`, {
+                method: "DELETE"
+            });
+            if (!res.ok) throw new Error("Failed to delete user");
+            fetchUsers();
+        } catch (e) {
+            showError(e.message);
+        }
+    }
+
+    async function deleteSubscription(id) {
+        try {
+            const res = await fetch(`${API_BASE}/subscriptions/${id}`, {
+                method: "DELETE"
+            });
+            if (!res.ok) throw new Error("Failed to delete subscription");
+            fetchSubscriptions();
+        } catch (e) {
+            showError(e.message);
+        }
+    }
+
+    async function unsubscribe(userId, subId) {
+        try {
+            const res = await fetch(`${API_BASE}/users/${userId}/subscriptions/${subId}`, {
+                method: "DELETE"
+            });
+            if (!res.ok) throw new Error("Failed to unsubscribe");
+            fetchUsers();
+        } catch (e) {
+            showError(e.message);
+        }
+    }
+
+    addUserButton.addEventListener("click", addUser);
+    addSubButton.addEventListener("click", addSubscription);
+
+    fetchSubscriptions();
+</script>
+</body>
+</html>
