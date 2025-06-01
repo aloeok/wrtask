@@ -25,6 +25,8 @@
 
         <junit.version>5.12.1</junit.version>
         <junit-platform.version>1.12.1</junit-platform.version>
+        <h2.version>2.3.232</h2.version>
+        <assertj.version>3.27.3</assertj.version>
 
         <jetbrains-annotations.version>26.0.2</jetbrains-annotations.version>
     </properties>
@@ -119,6 +121,18 @@
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-engine</artifactId>
             <version>${junit-platform.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
