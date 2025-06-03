@@ -41,6 +41,28 @@ public class UserSubscriptionService {
                 ));
     }
 
+    // TODO: remove
+    @Transactional(readOnly = true)
+    public @NotNull List<User> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(userEntity -> new User(
+                        userEntity.getId(),
+                        userEntity.getUsername()
+                ))
+                .toList();
+    }
+
+    // TODO: remove
+    @Transactional(readOnly = true)
+    public @NotNull List<Subscription> getAllSubscriptions() {
+        return subscriptionRepository.findAll().stream()
+                .map(subscriptionEntity -> new Subscription(
+                        subscriptionEntity.getId(),
+                        subscriptionEntity.getName()
+                ))
+                .toList();
+    }
+
     @Transactional
     public void updateUser(@NotNull Long id, @NotNull String username) {
         UserEntity userEntity = userRepository.getReferenceById(id);
@@ -61,7 +83,7 @@ public class UserSubscriptionService {
         return subscriptionEntity.getId();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void deleteSubscription(@NotNull Long id) {
         subscriptionRepository.deleteById(id);
     }

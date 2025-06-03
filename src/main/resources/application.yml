@@ -3,6 +3,12 @@ spring:
     name: wrtask
 
   datasource:
+
+    # local test db
+    url: "jdbc:postgresql://localhost:5433/wrtask-db"
+    username: wrtask-user
+    password: wrtask-1357!#%
+
     driver-class-name: org.postgresql.Driver
     hikari:
       connection-timeout: 30000
@@ -13,9 +19,17 @@ spring:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+    properties:
+      hibernate:
+        generate_statistics: true
 
   liquibase:
     enabled: true
+
+logging:
+  level:
+    org.hibernate.stat: DEBUG
+    org.hibernate.SQL: DEBUG
 
 server:
   port: 8081
