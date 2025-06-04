@@ -5,9 +5,9 @@ spring:
   datasource:
 
     # local test db
-    url: "jdbc:postgresql://localhost:5433/wrtask-db"
-    username: wrtask-user
-    password: wrtask-1357!#%
+#    url: "jdbc:postgresql://localhost:5433/wrtask-db"
+#    username: wrtask-user
+#    password: wrtask-1357!#%
 
     driver-class-name: org.postgresql.Driver
     hikari:
